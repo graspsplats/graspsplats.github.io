@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title> GraspSplats: Efficient Manipulation with 3D Feature Splatting </title>
+	<link href="res/css/bootstrap.min.css" rel="stylesheet">
+	<script src="res/css/fa.js"></script>
+
+	<style>
+      .header {
+        width: auto;
+        padding-top: 4rem;
+        padding-bottom: 2rem;
+      }
+
+      a:link,a:visited
+      {
+        color: #0071bc;
+        text-decoration: none;
+      }
+
+      a:hover {
+        color: #208799;
+      }
+
+      .section-div {height: 3em}
+      .content-div {height: 1em}
+
+      .no-gutters {
+	      margin-right: 0;
+	      margin-left: 0;
+      }
+
+	  .btn {
+	      margin-left: 0.2rem;
+	  	  margin-right: 0.2rem;
+	  }
+
+	</style>
+</head>
+
+<div class="header">
+	<center><h1>GraspSplats: Efficient Manipulation with 3D Feature Splatting</h1></center>
+	<div class="content-div"></div>
+	<center>
+		<a href="https://jimazeyu.github.io/" target="_blank" style="font-size:18px">Mazeyu Ji</a><sup style="font-size:12px">&nbsp*,1</sup>,&nbsp
+		<a href="https://rogerqi.github.io/" target="_blank" style="font-size:18px">Ri-Zhao Qiu</a><sup style="font-size:12px">&nbsp*,1</sup>,&nbsp
+		<a href="https://maureenzou.github.io/" target="_blank" style="font-size:18px">Xueyan Zou</a><sup style="font-size:12px">&nbsp1</sup>,&nbsp
+		<a href="https://xiaolonw.github.io/" target="_blank" style="font-size:18px">Xiaolong Wang</a><sup style="font-size:12px">&nbsp1</sup>
+	</center>
+	
+	<center>
+		<sup style="font-size:12px">&nbsp*</sup> Equal Contribution
+	</center>
+	
+	<div class="content-div"></div>
+	
+	<center>
+		<sup style="font-size:12px">1</sup>&nbspUC San Diego
+	</center>
+	
+
+	<div class="content-div"></div>
+	<center>
+		<div class="btn-group" role="group">
+
+			<a href="coming" target="_blank">
+				<button type="button" class="btn btn-dark"><span class="icon">
+					<i class="fas fa-file-pdf"></i> Paper
+				</span></button>
+			</a>
+
+			<a href="https://github.com/jimazeyu/GraspSplats" target="_blank">
+				<button type="button" class="btn btn-dark"><span class="icon">
+					<i class="fab fa-github"></i> Code
+				</span></button>
+			</a>
+
+<!--			<a href="">-->
+<!--				<button type="button" class="btn btn-dark"><span class="icon">-->
+<!--					<i class="fab fa-youtube"></i> Video-->
+<!--				</span></button>-->
+<!--			</a>-->
+
+			<!-- <a href="coming">
+				<button type="button" class="btn btn-dark"><span class="icon">
+					<i class="fab fa-twitter"></i> Twitter
+				</span></button>
+        	</a> -->
+
+		</div>
+	</center>
+</div>
+
+<div class="container">
+	<!--------------------- abstract --------------------->
+	<center>
+		<h2> Abstract </h2>
+		<div class="content-div"></div>
+		<p style="width:75%; text-align: justify; white-space: normal;"> The ability for robots to perform efficient and <strong>zero-shot</strong> grasping of object parts is crucial for practical applications and is becoming prevalent with recent advances in Vision-Language Models (VLMs). To bridge the 2D-to-3D gap for representations to support such a capability, existing methods rely on neural fields (NeRFs) via differentiable rendering or point-based projection methods. However, we demonstrate that NeRFs are inappropriate for scene changes due to its implicitness and point-based methods are inaccurate for part localization without rendering-based optimization. To amend these issues, we propose GraspSplats. Using depth supervision and a novel reference feature computation method, GraspSplats generates high-quality scene representations in under 60 seconds. We further validate the advantages of Gaussian-based representation by showing that the explicit and optimized geometry in GraspSplats is sufficient to natively support (1) real-time grasp sampling and (2) <strong>dynamic and articulated object manipulation</strong> with point trackers. With extensive experiments on a Franka robot, we demonstrate that GraspSplats significantly outperforms existing methods under diverse task settings. In particular, GraspSplats outperforms NeRF-based methods like F3RM and LERF-TOGO, and 2D detection methods. </p>
+	</center>
+
+	<div class="content-div"></div>
+
+	<center>
+		<h2> Overview Video </h2>
+	</center>
+	<div class="content-div"></div>
+	<div class="col" style="display: flex; justify-content: center;">
+		<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 90%; width: 90%; height: auto;">
+			<iframe src="https://www.youtube.com/embed/LkTe2jjsLDA?si=_4OCt_G4YjIrUiBp" 
+					title="YouTube video player" 
+					frameborder="0" 
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+					allowfullscreen="" 
+					style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+			</iframe>
+		</div>
+	</div>
+	
+	
+
+
+	<center>
+		<div class="section-div"></div>
+		<h2> Constructing Feature-enhanced 3D Gaussians	</h2>
+		<div class="content-div"></div>
+		<img class="img-fluid" src="resources/feature_overview.jpg" style="margin-bottom: 30px" width="100%" alt=""><br>
+
+		<p style="width:75%; text-align: justify; white-space: normal;"> GraspSplats employs two techniques to efficiently construct feature-enhanced 3D
+			Gaussians: <strong>hierarchical feature extraction</strong> and <strong>dense initialization</strong> from geometry regularization, which
+			reduces the overall runtime to <strong>1/10</strong> of existing GS methods. </p>
+	</center>
+
+
+	<center>
+		<div class="section-div"></div>
+		<h2> Qualitative Open-vocabulary Segmentation Results </h2>
+		<div class="content-div"></div>
+		<img class="img-fluid" src="resources/landscape_qual_seg.jpg" style="margin-bottom: 30px" width="80%" alt=""><br>
+	</center>
+
+
+	<div class="section-div"></div>
+	<center>
+	<h2> Precise Part Level Grasping in Staic Scenes</h2>
+	</center>
+	<div class="content-div"></div>
+
+	<div class="row align-items-center">
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Pick up the <strong>cup</strong> by the <strong>rim</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/cup_rim.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Pick up the <strong>charger</strong> by the <strong>plug</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/charger_plug.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+	</div>
+
+	<br>
+	
+	<div class="row align-items-center">
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Pick up the <strong>gray teapot</strong> by the <strong>handle</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/teapot_handle.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Pick up the <strong>headphones</strong> by the <strong>headband</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/headphones_headband.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+	</div>
+
+	<br>
+	
+	<div class="row align-items-center">
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Pick up the <strong>screwdriver</strong> by the <strong>handle</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/screwdriver_handle.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Pick up the <strong>white door</strong> by the <strong>gray handle</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/door_handle.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+	</div>
+
+	<br>
+	
+	<div class="row align-items-center">
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Move the <strong>apple</strong> to the <strong>sink</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/apple_sink.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Open the <strong>drawer</strong> by the <strong>green handle</strong>.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/static_scene/drawer_handle.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+	</div>
+	
+	<div class="section-div"></div>
+	<center>
+	<h2> Rapid Sequential Query and Grasping of Objects</h2>
+	</center>
+	<div class="content-div"></div>
+
+	<div class="row align-items-center">
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Fast grasp <strong>all the toys</strong> on the table.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/fast_grasp/all_toys.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+		<div class="col-md-6 align-column-center">
+			<center>
+				<h5>Fast grasp <strong>the screwdrivers</strong> on the table.</h5>
+				<div class="content-div"></div>
+				<video playsinline autoplay loop muted src="resources/fast_grasp/all_screwdrivers.mp4" width="99%" style="border-radius:10px;"></video>
+			</center>
+		</div>
+	</div>
+
+	<center>
+		<div class="section-div"></div>
+		<h2> Grasping Pipeline in Dynamic Scenes</h2>
+		<div class="content-div"></div>
+		<img class="img-fluid" src="resources/dynamic_pipeline.png" style="margin-bottom: 30px" width="90%" alt=""><br>
+
+		<p style="width:75%; text-align: justify; white-space: normal;"> Given an initial state of Gaussians and RGB-D observations from one or more cameras,
+			GraspSplats <strong>tracks</strong> the 3D motion of objects specified via language, which is used to deform the
+			Gaussian representations in real-time. Given object-part text pairs, GraspSplats proposes grasping
+			poses using both semantics and geometry of Gaussian primitives <strong>in milliseconds</strong>.</p>
+	</center>
+
+	<div class="section-div"></div>
+	<center>
+
+	<h2> Grasping Applications in Dynamic Environments</h2>
+	</center>
+	<div class="content-div"></div>
+	<div class="col">
+		<center>
+			<h5>After the <strong>white door</strong> is open, close it using the <strong>gray handle</strong>.</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/close_door.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+	<br>
+
+	<div class="col">
+		<center>
+			<h5>Follow the <strong>gray teapot</strong> and lift it by <strong>handle</strong> once it stops.	</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/follow_teapot.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+	<br>
+
+	<div class="col">
+		<center>
+			<h5>Put the <strong>pineapple</strong> in the <strong>purple bowl</strong> when the turntable stops.	</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/fruit_bowl.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+	<br>
+
+	<div class="col">
+		<center>
+			<h5>After the <strong>yellow ball</strong> is hit, place it back in its original position.	</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/reset_ball.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+	<br>
+
+	<div class="col">
+		<center>
+			<h5>Return the <strong>toy car</strong> to the starting point if it gets stuck.	</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/reset_car.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+	<br>
+
+	<div class="col">
+		<center>
+			<h5>Once the <strong>white cup</strong> is placed down, lift it up by the <strong>rim</strong>.	</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/track_cup.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+	<br>
+
+	<div class="col">
+		<center>
+			<h5>Track all the <strong>dolls</strong> and grasp them once they have stopped.	</h5>
+			<video playsinline autoplay loop muted controls src="resources/dynamic_scenes/tracking_all.mp4" width="100%" preload="metadata"
+			   style="border-radius:10px;"></video>
+		</center>
+	</div>
+
+
+	<!--------------------- Bibtex --------------------->
+	<div class="content-div"></div>
+	<center><h2> Bibtex </h2></center>
+	<div class="content-div"></div>
+	<pre>
+	  TODO
+	</pre>
+
+</div>
+
+</html>

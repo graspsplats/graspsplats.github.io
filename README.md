@@ -1,1 +1,1 @@
-# graspsplats.github.io
+# Project Website for GraspSplats
